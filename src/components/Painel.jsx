@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Inicio from './Inicio'
+import Demandas from './Demandas'
 import Clientes from './Clientes'
 import Equipe from './Equipe'
 
@@ -10,7 +11,7 @@ export default function Painel({ sessao }) {
   const [perfil, setPerfil] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
-  const [secao, setSecao] = useState('inicio') // 'inicio' | 'clientes' | 'equipe'
+  const [secao, setSecao] = useState('inicio') // 'inicio' | 'demandas' | 'clientes' | 'equipe'
 
   useEffect(() => {
     async function buscarPerfil() {
@@ -80,6 +81,13 @@ export default function Painel({ sessao }) {
         </button>
         <button
           type="button"
+          className={secao === 'demandas' ? 'ativo' : ''}
+          onClick={() => setSecao('demandas')}
+        >
+          Demandas
+        </button>
+        <button
+          type="button"
           className={secao === 'clientes' ? 'ativo' : ''}
           onClick={() => setSecao('clientes')}
         >
@@ -98,6 +106,7 @@ export default function Painel({ sessao }) {
 
       <section className="conteudo">
         {secao === 'inicio' && <Inicio perfil={perfil} sessao={sessao} />}
+        {secao === 'demandas' && <Demandas />}
         {secao === 'clientes' && <Clientes perfil={perfil} />}
         {secao === 'equipe' && <Equipe perfil={perfil} />}
       </section>
