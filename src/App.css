@@ -74,3 +74,220 @@
   font-size: 0.85rem;
   margin: 0;
 }
+
+/* ── App logado (casca) ───────────────────────────────────── */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #1f6feb;
+  color: #fff;
+}
+.topo .quem {
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.menu {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid #e3e3e3;
+}
+.menu button {
+  background: transparent;
+  border: 0;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+}
+.menu button.ativo {
+  background: #e8f0fe;
+  color: #1f6feb;
+  font-weight: 600;
+}
+
+.conteudo {
+  padding: 1rem;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.bloco h1 {
+  font-size: 1.4rem;
+}
+.dica {
+  color: #666;
+  margin-top: 1rem;
+}
+
+/* botao com cara de link */
+.link {
+  background: transparent;
+  border: 0;
+  color: #1f6feb;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  text-align: left;
+}
+.topo .link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* listas de cliente/obra */
+.lista {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+}
+.lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid #eee;
+}
+.lista li.sel {
+  background: #f0f6ff;
+}
+.lista li.vazio {
+  color: #999;
+  justify-content: flex-start;
+}
+.excluir {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* busca e formularios de cadastro */
+.secao-clientes input[type='search'],
+.secao-obras input[type='search'] {
+  width: 100%;
+  padding: 0.55rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.form-novo {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: 1px dashed #ccc;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.form-novo h3,
+.form-novo h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+.form-novo input {
+  padding: 0.55rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.form-novo button {
+  align-self: flex-start;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: #1f6feb;
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.form-novo button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.aviso {
+  color: #9a6700;
+  background: #fff8e1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.secao-obras {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #e3e3e3;
+}
+
+/* ── Equipe ────────────────────────────────────────────────── */
+.secao-equipe .dica {
+  margin-bottom: 1rem;
+}
+.lista-equipe {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.linha-perfil {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+.linha-perfil input[type='text'] {
+  flex: 1 1 140px;
+  padding: 0.45rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.linha-perfil select {
+  padding: 0.45rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.linha-perfil button {
+  padding: 0.45rem 0.8rem;
+  border: 0;
+  border-radius: 6px;
+  background: #1f6feb;
+  color: #fff;
+  cursor: pointer;
+}
+.linha-perfil button:disabled {
+  opacity: 0.6;
+}
+.ativo-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+.voce {
+  color: #1f6feb;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.msg {
+  color: #2e7d32;
+  font-size: 0.85rem;
+}

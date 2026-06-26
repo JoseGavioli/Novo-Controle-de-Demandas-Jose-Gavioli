@@ -21,44 +21,45 @@ export default function Login() {
     })
 
     if (error) {
-      // Mensagem amigavel — sem expor detalhes tecnicos ao usuario.
       setErro('Não foi possível entrar. Confira o email e a senha.')
     }
     setCarregando(false)
   }
 
   return (
-    <form className="cartao" onSubmit={entrar}>
-      <h1>Controle de Demandas</h1>
-      <p className="subtitulo">JFA — Esquadrias de Alumínio</p>
+    <main className="tela">
+      <form className="cartao" onSubmit={entrar}>
+        <h1>Controle de Demandas</h1>
+        <p className="subtitulo">JFA — Esquadrias de Alumínio</p>
 
-      <label>
-        Email
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-        />
-      </label>
+        <label>
+          Email
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+          />
+        </label>
 
-      <label>
-        Senha
-        <input
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-          autoComplete="current-password"
-        />
-      </label>
+        <label>
+          Senha
+          <input
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+            autoComplete="current-password"
+          />
+        </label>
 
-      {erro && <p className="erro">{erro}</p>}
+        {erro && <p className="erro">{erro}</p>}
 
-      <button type="submit" disabled={carregando}>
-        {carregando ? 'Entrando…' : 'Entrar'}
-      </button>
-    </form>
+        <button type="submit" disabled={carregando}>
+          {carregando ? 'Entrando…' : 'Entrar'}
+        </button>
+      </form>
+    </main>
   )
 }

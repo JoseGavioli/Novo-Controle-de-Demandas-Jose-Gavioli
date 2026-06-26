@@ -1,26 +1,27 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import Inicio from './Inicio'
+import Clientes from './Clientes'
+import Equipe from './Equipe'
 
-// Painel mostrado APOS o login. Ele busca, no banco, o perfil do
-// usuario logado (nome e papel) e oferece o botao de sair.
-// Recebe a "sessao" do App como propriedade (prop).
+// Casca do app logado: carrega o perfil do usuario, mostra a barra do
+// topo (nome/papel/Sair) e um menu, e renderiza a "secao" ativa.
 export default function Painel({ sessao }) {
   const [perfil, setPerfil] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
+  const [secao, setSecao] = useState('inicio') // 'inicio' | 'clientes' | 'equipe'
 
-  // useEffect roda depois que o componente aparece na tela.
-  // Aqui ele busca UMA vez o perfil do usuario logado.
   useEffect(() => {
     async function buscarPerfil() {
       const { data, error } = await supabase
         .from('perfil')
-        .select('nome_completo, papel')
-        .eq('id', sessao.user.id) // so o proprio perfil (a RLS tambem garante isso)
-        .single() // esperamos exatamente 1 linha
+        .select('id, nome_completo, papel')
+        .eq('id', sessao.user.id)
+        .single()
 
       if (error) {
-        setErro('Seu usuário ainda não tem um perfil cadastrado na tabela "perfil".')
+        setErro('Seu usuário ainda não tem um perfil cadastrado.')
       } else {
         setPerfil(data)
       }
@@ -34,30 +35,72 @@ export default function Painel({ sessao }) {
   }
 
   if (carregando) {
-    return <div className="cartao">Carregando seu perfil…</div>
+    return (
+      <main className="tela">
+        <div className="cartao">Carregando…</div>
+      </main>
+    )
+  }
+
+  if (erro) {
+    return (
+      <main className="tela">
+        <div className="cartao">
+          <p className="erro">{erro}</p>
+          <button type="button" onClick={sair}>
+            Sair
+          </button>
+        </div>
+      </main>
+    )
   }
 
   return (
-    <div className="cartao">
-      <h1>Você está logado ✅</h1>
+    <div className="app">
+      <header className="topo">
+        <div>
+          <strong>Controle de Demandas</strong>
+          <span className="quem">
+            {' '}
+            — {perfil.nome_completo} ({perfil.papel})
+          </span>
+        </div>
+        <button type="button" className="link" onClick={sair}>
+          Sair
+        </button>
+      </header>
 
-      {erro ? (
-        <p className="erro">{erro}</p>
-      ) : (
-        <>
-          <p>
-            Olá, <strong>{perfil.nome_completo}</strong>!
-          </p>
-          <p>
-            Seu papel: <strong>{perfil.papel}</strong>
-          </p>
-        </>
-      )}
+      <nav className="menu">
+        <button
+          type="button"
+          className={secao === 'inicio' ? 'ativo' : ''}
+          onClick={() => setSecao('inicio')}
+        >
+          Início
+        </button>
+        <button
+          type="button"
+          className={secao === 'clientes' ? 'ativo' : ''}
+          onClick={() => setSecao('clientes')}
+        >
+          Clientes
+        </button>
+        {perfil.papel === 'admin' && (
+          <button
+            type="button"
+            className={secao === 'equipe' ? 'ativo' : ''}
+            onClick={() => setSecao('equipe')}
+          >
+            Equipe
+          </button>
+        )}
+      </nav>
 
-      <p className="email">{sessao.user.email}</p>
-      <button type="button" onClick={sair}>
-        Sair
-      </button>
+      <section className="conteudo">
+        {secao === 'inicio' && <Inicio perfil={perfil} sessao={sessao} />}
+        {secao === 'clientes' && <Clientes perfil={perfil} />}
+        {secao === 'equipe' && <Equipe perfil={perfil} />}
+      </section>
     </div>
   )
 }
