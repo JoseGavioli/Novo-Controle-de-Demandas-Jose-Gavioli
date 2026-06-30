@@ -191,6 +191,8 @@ qualquer estado nao-terminal -> cancelada [TERMINAL, so Admin efetiva]
 - **Cancelamento** só é **efetivado** pelo Admin. O vendedor apenas **solicita** (ver §12).
 - Apenas Atendente/Admin movem status. O vendedor nunca.
 
+> **Atualização (pós-Fase 6, ajustes de UX):** o status `concluido` foi **removido do fluxo**. Hoje `em_revisao_custo` vai **direto para `enviado`** (o terminal de sucesso, exibido em verde). O valor `concluido` **permanece no enum** como **legado** — nenhuma demanda nova entra nele, mas demandas que já estavam nesse estado continuam válidas e podem ser movidas. Mudança **não destrutiva** (não mexe no enum nem no histórico). Ver migração `0013_concluido_fora_do_fluxo.sql`. O diagrama e a tabela acima refletem o desenho **original**; a regra "revisão de custo é obrigatória" continua valendo (ninguém pula de `em_andamento` direto para `enviado`).
+
 ---
 
 ## 8. URGÊNCIA (derivada do prazo — calculada, não armazenada)
