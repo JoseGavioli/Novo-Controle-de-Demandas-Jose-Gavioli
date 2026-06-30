@@ -1192,6 +1192,25 @@ button.card-corpo:hover {
   padding: 0.7rem 0.85rem;
   margin: 1rem 0;
 }
+.resumo-titulo {
+  margin: 0;
+}
+.resumo-status {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.resumo-status li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.resumo-status strong {
+  color: var(--texto);
+}
 .notificacoes-inicio {
   margin-top: 1.5rem;
 }
