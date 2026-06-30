@@ -16,6 +16,13 @@ export default function Painel({ sessao }) {
   const [secao, setSecao] = useState('inicio') // 'inicio' | 'demandas' | 'clientes' | 'equipe'
   const [novidades, setNovidades] = useState([]) // ids com mudanca de status nao vista
   const [comentariosNovos, setComentariosNovos] = useState([]) // ids com comentario novo
+  const [demandaInicial, setDemandaInicial] = useState(null) // demanda a abrir ao ir p/ Demandas
+
+  // Chamado pela Inicio: vai para a tela de Demandas ja abrindo a demanda.
+  function abrirDemanda(id) {
+    setDemandaInicial(id)
+    setSecao('demandas')
+  }
 
   useEffect(() => {
     async function buscarPerfil() {
@@ -135,13 +142,21 @@ export default function Painel({ sessao }) {
       </nav>
 
       <section className="conteudo">
-        {secao === 'inicio' && <Inicio perfil={perfil} sessao={sessao} />}
+        {secao === 'inicio' && (
+          <Inicio
+            perfil={perfil}
+            recarregarNovidades={recarregarNovidades}
+            aoAbrirDemanda={abrirDemanda}
+          />
+        )}
         {secao === 'demandas' && (
           <Demandas
             perfil={perfil}
             novidades={new Set(novidades)}
             comentariosNovos={new Set(comentariosNovos)}
             recarregarNovidades={recarregarNovidades}
+            demandaInicial={demandaInicial}
+            aoConsumirInicial={() => setDemandaInicial(null)}
           />
         )}
         {secao === 'clientes' && <Clientes perfil={perfil} />}

@@ -13,18 +13,19 @@ const STATUS_ABERTOS = [
 
 // Tela inicial: boas-vindas + demandas em aberto (total e por status) +
 // notificacoes (mudancas de status nao vistas, mais recentes primeiro).
-export default function Inicio({ perfil }) {
+//
+// O total NAO filtra por vendedor_id de proposito: a RLS ja decide o que
+// cada um ve (vendedor = as proprias; admin/atendente = todas).
+export default function Inicio({ perfil, recarregarNovidades, aoAbrirDemanda }) {
   const [emAberto, setEmAberto] = useState(null) // { total, porStatus }
   const [notificacoes, setNotificacoes] = useState([])
   const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
     async function carregar() {
-      // Demandas do usuario que NAO estao em estado terminal.
       const { data: abertas } = await supabase
         .from('demanda')
         .select('status')
-        .eq('vendedor_id', perfil.id)
         .not('status', 'in', '(enviado,cancelada)')
       const porStatus = {}
       for (const d of abertas ?? []) {
@@ -33,11 +34,25 @@ export default function Inicio({ perfil }) {
       setEmAberto({ total: abertas?.length ?? 0, porStatus })
 
       const { data } = await supabase.rpc('notificacoes')
-      if (data) setNotificacoes(data)
+      setNotificacoes(data ?? [])
       setCarregando(false)
     }
     carregar()
   }, [perfil.id])
+
+  // "Limpar": marca como vistas as demandas que estao gerando notificacao
+  // (grava a hora atual em visualizacao) e atualiza o contador do menu.
+  async function limpar() {
+    const ids = [...new Set(notificacoes.map((n) => n.demanda_id))]
+    if (ids.length === 0) return
+    const agora = new Date().toISOString()
+    await supabase.from('visualizacao').upsert(
+      ids.map((id) => ({ user_id: perfil.id, demanda_id: id, visto_em: agora })),
+      { onConflict: 'user_id,demanda_id' },
+    )
+    setNotificacoes([])
+    recarregarNovidades?.()
+  }
 
   return (
     <div className="bloco">
@@ -73,7 +88,14 @@ export default function Inicio({ perfil }) {
       )}
 
       <div className="notificacoes-inicio">
-        <h3>Notificações</h3>
+        <div className="cabecalho-notif">
+          <h3>Notificações</h3>
+          {notificacoes.length > 0 && (
+            <button type="button" className="link" onClick={limpar}>
+              Limpar
+            </button>
+          )}
+        </div>
         {carregando ? (
           <p className="dica">Carregando…</p>
         ) : notificacoes.length === 0 ? (
@@ -82,19 +104,26 @@ export default function Inicio({ perfil }) {
           <ul className="lista-notif">
             {notificacoes.map((n) => (
               <li key={n.historico_id}>
-                <span className={`status status-${n.para_status}`}>
-                  {STATUS_ROTULO[n.para_status]}
-                </span>
-                <div>
+                <button
+                  type="button"
+                  className="notif-link"
+                  onClick={() => aoAbrirDemanda?.(n.demanda_id)}
+                  title="Abrir a demanda"
+                >
+                  <span className={`status status-${n.para_status}`}>
+                    {STATUS_ROTULO[n.para_status]}
+                  </span>
                   <div>
-                    Demanda <strong>#{n.demanda_id}</strong> —{' '}
-                    {STATUS_ROTULO[n.de_status]} → {STATUS_ROTULO[n.para_status]}
+                    <div>
+                      Demanda <strong>#{n.demanda_id}</strong> —{' '}
+                      {STATUS_ROTULO[n.de_status]} → {STATUS_ROTULO[n.para_status]}
+                    </div>
+                    <div className="sub">
+                      por {n.autor_nome} ·{' '}
+                      {new Date(n.quando).toLocaleString('pt-BR')}
+                    </div>
                   </div>
-                  <div className="sub">
-                    por {n.autor_nome} ·{' '}
-                    {new Date(n.quando).toLocaleString('pt-BR')}
-                  </div>
-                </div>
+                </button>
               </li>
             ))}
           </ul>

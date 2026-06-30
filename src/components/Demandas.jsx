@@ -20,6 +20,17 @@ const FILTROS_VAZIOS = {
   ordenar: false,
 }
 
+// Status finalizados que ganham destaque (borda colorida) na lista.
+const STATUS_FINAL = ['enviado', 'cancelada']
+
+// Iniciais (ate 2 letras) para o mini-avatar do vendedor.
+function iniciais(nome) {
+  const partes = nome.trim().split(/\s+/)
+  const a = partes[0]?.[0] ?? ''
+  const b = partes.length > 1 ? partes[partes.length - 1][0] : ''
+  return (a + b).toUpperCase()
+}
+
 // Secao "Demandas". Sem filtro: arvore aninhada (pai ↪ filha) com codigo
 // hierarquico e recolher/expandir. Com filtro: lista plana dos resultados.
 // A RLS ja restringe (vendedor ve as proprias; admin/atendente veem todas).
@@ -28,6 +39,8 @@ export default function Demandas({
   novidades,
   comentariosNovos,
   recarregarNovidades,
+  demandaInicial,
+  aoConsumirInicial,
 }) {
   const [demandas, setDemandas] = useState([])
   const [carregando, setCarregando] = useState(true)
@@ -42,7 +55,7 @@ export default function Demandas({
     const { data, error } = await supabase
       .from('demanda')
       .select(
-        'id, descricao, prazo, status, created_at, demanda_pai_id, cancelamento_solicitado, tipo_demanda(nome), obra(nome, cliente(nome)), comentario(count)',
+        'id, descricao, prazo, status, created_at, demanda_pai_id, cancelamento_solicitado, tipo_demanda(nome), obra(nome, cliente(nome)), vendedor:perfil!vendedor_id(nome_completo), comentario(count)',
       )
       .order('created_at', { ascending: false })
     if (error) setErro('Não foi possível carregar as demandas.')
@@ -53,6 +66,14 @@ export default function Demandas({
   useEffect(() => {
     carregar()
   }, [])
+
+  // Veio da Inicio clicando numa notificacao: abre a demanda direto.
+  useEffect(() => {
+    if (demandaInicial) {
+      setDetalheId(demandaInicial)
+      aoConsumirInicial?.()
+    }
+  }, [demandaInicial])
 
   function alternar(id) {
     setRecolhidos((prev) => {
@@ -164,10 +185,11 @@ export default function Demandas({
   function botaoDemanda(d, nivel) {
     const qtdComent = d.comentario?.[0]?.count ?? 0
     const comentNovo = comentariosNovos?.has(d.id)
+    const destaque = STATUS_FINAL.includes(d.status) ? ` fim-${d.status}` : ''
     return (
       <button
         type="button"
-        className="item-demanda"
+        className={`item-demanda${destaque}`}
         onClick={() => setDetalheId(d.id)}
       >
         <div>
@@ -176,6 +198,14 @@ export default function Demandas({
           <div className="sub">
             {d.obra?.cliente?.nome} / {d.obra?.nome} · prazo {d.prazo}
           </div>
+          {perfil.papel !== 'vendedor' && d.vendedor?.nome_completo && (
+            <div className="vendedor-linha">
+              <span className="avatar-mini">
+                {iniciais(d.vendedor.nome_completo)}
+              </span>
+              {d.vendedor.nome_completo}
+            </div>
+          )}
         </div>
         <div className="badges">
           <span className={`status status-${d.status}`}>

@@ -385,6 +385,7 @@ textarea::placeholder {
   padding: 0.8rem 0.9rem;
   background: transparent;
   border: 0;
+  border-left: 4px solid transparent;
   cursor: pointer;
   text-align: left;
   font: inherit;
@@ -393,6 +394,39 @@ textarea::placeholder {
 }
 .item-demanda:hover {
   background: var(--surface-hover);
+}
+/* destaque das demandas finalizadas (borda colorida a esquerda) */
+.item-demanda.fim-concluido {
+  border-left-color: var(--st-concluido-fg);
+}
+.item-demanda.fim-enviado {
+  border-left-color: var(--st-enviado-fg);
+}
+.item-demanda.fim-cancelada {
+  border-left-color: var(--st-cancelada-fg);
+}
+
+/* nome do vendedor (mini-avatar de iniciais) no card da demanda */
+.vendedor-linha {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+}
+.avatar-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--primaria-suave);
+  color: var(--primaria);
+  font-size: 0.65rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 .toggle-filhas {
   flex-shrink: 0;
@@ -1214,10 +1248,16 @@ button.card-corpo:hover {
 .notificacoes-inicio {
   margin-top: 1.5rem;
 }
+.cabecalho-notif {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
 .notificacoes-inicio h3 {
   font-size: 1rem;
   color: var(--texto-suave);
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 .lista-notif {
   list-style: none;
@@ -1228,13 +1268,27 @@ button.card-corpo:hover {
   gap: 0.5rem;
 }
 .lista-notif li {
-  display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
   background: var(--surface);
   border: 1px solid var(--borda);
   border-radius: var(--raio-sm);
+  overflow: hidden;
+}
+.notif-link {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  width: 100%;
   padding: 0.6rem 0.75rem;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--texto);
+  transition: background 0.12s ease;
+}
+.notif-link:hover {
+  background: var(--surface-hover);
 }
 .lista-notif .sub {
   color: var(--texto-suave);

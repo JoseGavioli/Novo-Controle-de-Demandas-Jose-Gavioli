@@ -46,10 +46,17 @@ export default function DetalheDemanda({
   // Marca a demanda como VISTA (zera a novidade dela) e pede ao Painel
   // para recarregar o contador. Usado ao abrir E ao agir na demanda.
   async function marcarVisto() {
+    // visto_em explicito de proposito: num upsert, sem passar a coluna, o
+    // caminho de UPDATE (quando a linha ja existe) NAO atualizaria a hora —
+    // ela ficaria congelada na 1a visita e a demanda nunca sairia de novidade.
     await supabase
       .from('visualizacao')
       .upsert(
-        { user_id: perfil.id, demanda_id: demandaId },
+        {
+          user_id: perfil.id,
+          demanda_id: demandaId,
+          visto_em: new Date().toISOString(),
+        },
         { onConflict: 'user_id,demanda_id' },
       )
     if (aoVisto) aoVisto()
