@@ -9,12 +9,15 @@ const URGENTE_MAX = 1 //   n <= 1      -> Urgente (inclui "vence hoje", n = 0)
 //                          n = 2 ou 3 -> Pouco urgente
 //                          prazo ja passou -> Muito urgente
 
-const ROTULO = {
-  tranquilo: 'Tranquilo',
-  pouco_urgente: 'Pouco urgente',
-  urgente: 'Urgente',
-  muito_urgente: 'Muito urgente',
-}
+// Niveis de urgencia, do mais critico ao menos (ordem usada na ordenacao
+// e nos filtros). Exportado para reuso (ex.: dropdown de filtro).
+export const URGENCIA_NIVEIS = [
+  { nivel: 'muito_urgente', rotulo: 'Muito urgente' },
+  { nivel: 'urgente', rotulo: 'Urgente' },
+  { nivel: 'pouco_urgente', rotulo: 'Pouco urgente' },
+  { nivel: 'tranquilo', rotulo: 'Tranquilo' },
+]
+const ROTULO = Object.fromEntries(URGENCIA_NIVEIS.map((u) => [u.nivel, u.rotulo]))
 
 // 'YYYY-MM-DD' -> Date na meia-noite LOCAL. Fazemos manualmente para
 // evitar o desvio de fuso (new Date('2026-06-30') seria interpretado

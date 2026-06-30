@@ -959,3 +959,30 @@
   color: #2e7d32;
   font-weight: 700;
 }
+
+/* ── Filtros das demandas ──────────────────────────────────── */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+.filtros input[type='search'],
+.filtros select {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.filtros input[type='search'] {
+  flex: 1 1 200px;
+}
+.filtros .check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: #333;
+  white-space: nowrap;
+}
