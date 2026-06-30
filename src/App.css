@@ -836,34 +836,91 @@
   display: block;
 }
 
-/* Lightbox: imagem expandida sobre a pagina */
+/* Lightbox: imagem expandida sobre a pagina, com carrossel e zoom */
 .lightbox {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
 }
-.lightbox img {
-  max-width: 95vw;
-  max-height: 90vh;
+.lightbox-palco {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none; /* o navegador nao "rouba" o gesto; o pan fica por nossa conta */
+}
+.lightbox-palco img {
+  max-width: 92vw;
+  max-height: 82vh;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  cursor: default;
+  border-radius: 6px;
+  user-select: none;
 }
-.lightbox-fechar {
+.lightbox-barra {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 1001;
+}
+.lightbox-barra button {
   width: 40px;
   height: 40px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.92);
-  font-size: 1.1rem;
   cursor: pointer;
+  font-size: 0.95rem;
+}
+.lightbox-barra button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.zoom-nivel {
+  color: #fff;
+  font-size: 0.85rem;
+  min-width: 3rem;
+  text-align: center;
+}
+.lightbox .nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 64px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+}
+.lightbox .nav-ant {
+  left: 0.5rem;
+}
+.lightbox .nav-prox {
+  right: 0.5rem;
+}
+.lightbox-legenda {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  max-width: 80vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

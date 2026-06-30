@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { enviarAnexo, validarArquivo, formatarTamanho, ehImagem } from '../lib/anexos'
+import Lightbox from './Lightbox'
 
 // Anexos da demanda: entrada (vendedor dono) e saida (atendente/admin).
 // Bucket privado -> download por LINK ASSINADO temporario. Imagens ganham
-// MINIATURA e abrem num LIGHTBOX (na propria pagina); PDF/outros abrem em
-// nova guia.
+// MINIATURA e abrem num LIGHTBOX (com carrossel e zoom); PDF/outros abrem
+// em nova guia.
 export default function Anexos({ demanda, perfil }) {
   const [anexos, setAnexos] = useState([])
   const [urlsImagens, setUrlsImagens] = useState({}) // caminho_storage -> signedUrl
-  const [lightbox, setLightbox] = useState(null) // { url, nome } | null
+  const [lightboxIdx, setLightboxIdx] = useState(null) // indice na lista de imagens, ou null
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -55,15 +56,10 @@ export default function Anexos({ demanda, perfil }) {
     carregar()
   }, [demanda.id])
 
-  // Fecha o lightbox com a tecla Esc.
-  useEffect(() => {
-    if (!lightbox) return
-    function aoTeclar(e) {
-      if (e.key === 'Escape') setLightbox(null)
-    }
-    window.addEventListener('keydown', aoTeclar)
-    return () => window.removeEventListener('keydown', aoTeclar)
-  }, [lightbox])
+  // Lista (na ordem exibida) das imagens que tem link pronto — alimenta o carrossel.
+  const imagens = anexos
+    .filter((a) => ehImagem(a.nome_original) && urlsImagens[a.caminho_storage])
+    .map((a) => ({ id: a.id, url: urlsImagens[a.caminho_storage], nome: a.nome_original }))
 
   async function enviar(tipo, file) {
     if (!file) return
@@ -90,11 +86,11 @@ export default function Anexos({ demanda, perfil }) {
     else window.open(data.signedUrl, '_blank')
   }
 
-  // Imagem -> lightbox na propria pagina; outros -> nova guia.
+  // Imagem -> abre o lightbox no indice dela; outros -> nova guia.
   function abrir(anexo) {
-    const url = urlsImagens[anexo.caminho_storage]
-    if (ehImagem(anexo.nome_original) && url) {
-      setLightbox({ url, nome: anexo.nome_original })
+    if (ehImagem(anexo.nome_original) && urlsImagens[anexo.caminho_storage]) {
+      const idx = imagens.findIndex((img) => img.id === anexo.id)
+      setLightboxIdx(idx >= 0 ? idx : 0)
     } else {
       baixar(anexo)
     }
@@ -208,27 +204,12 @@ export default function Anexos({ demanda, perfil }) {
         </label>
       )}
 
-      {lightbox && (
-        <div
-          className="lightbox"
-          onClick={() => setLightbox(null)}
-          role="dialog"
-          aria-modal="true"
-        >
-          <button
-            type="button"
-            className="lightbox-fechar"
-            onClick={() => setLightbox(null)}
-            aria-label="Fechar"
-          >
-            ✕
-          </button>
-          <img
-            src={lightbox.url}
-            alt={lightbox.nome}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+      {lightboxIdx !== null && (
+        <Lightbox
+          imagens={imagens}
+          indiceInicial={lightboxIdx}
+          aoFechar={() => setLightboxIdx(null)}
+        />
       )}
     </div>
   )
