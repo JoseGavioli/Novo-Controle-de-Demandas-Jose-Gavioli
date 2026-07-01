@@ -4,19 +4,30 @@ import Inicio from './Inicio'
 import Demandas from './Demandas'
 import Clientes from './Clientes'
 import Equipe from './Equipe'
-import BotaoTema from './BotaoTema'
+import MenuLateral from './MenuLateral'
+import Tema from './Tema'
 import Notificacoes from './Notificacoes'
 import ToastNotificacao from './ToastNotificacao'
 import { useNotificacoes } from '../lib/useNotificacoes'
 
-// Casca do app logado: carrega o perfil do usuario, mostra a barra do
-// topo (nome/papel/Sair), um menu (com contador de novidades nas
-// Demandas) e renderiza a "secao" ativa.
+// Nome exibido no cabecalho para cada secao.
+const NOME_TELA = {
+  inicio: 'Início',
+  demandas: 'Demandas',
+  clientes: 'Clientes',
+  equipe: 'Equipe',
+  notificacoes: 'Notificações',
+  tema: 'Tema',
+}
+
+// Casca do app logado: cabecalho enxuto (menu + nome da tela + sino), menu
+// lateral (drawer) com os atalhos / Tema / Sair, e a "secao" ativa.
 export default function Painel({ sessao }) {
   const [perfil, setPerfil] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
-  const [secao, setSecao] = useState('inicio') // 'inicio' | 'demandas' | 'clientes' | 'equipe'
+  const [secao, setSecao] = useState('inicio') // inicio|demandas|clientes|equipe|tema|notificacoes
+  const [menuAberto, setMenuAberto] = useState(false)
   const [demandaInicial, setDemandaInicial] = useState(null) // demanda a abrir ao ir p/ Demandas
   const [filtroInicial, setFiltroInicial] = useState(null) // filtro a aplicar ao ir p/ Demandas
   const [criarInicial, setCriarInicial] = useState(false) // abrir o form de nova demanda
@@ -108,73 +119,41 @@ export default function Painel({ sessao }) {
   return (
     <div className="app">
       <header className="topo">
-        <div className="marca-topo">
-          <img
-            className="logo-topo"
-            src="/logo-icone.svg"
-            alt="EsquadSystem"
-          />
-          <div>
-            <strong>Service Desk - EsquadSystem</strong>
-            <span className="quem">
-              {' '}
-              — {perfil.nome_completo} ({perfil.papel})
-            </span>
-          </div>
-        </div>
-        <div className="acoes-topo">
+        <div className="topo-esq">
           <button
             type="button"
-            className="sino"
-            onClick={() => setSecao('notificacoes')}
-            aria-label="Notificações"
-            title="Notificações"
+            className="botao-menu"
+            onClick={() => setMenuAberto(true)}
+            aria-label="Abrir menu"
           >
-            🔔
-            {naoLidas > 0 && <span className="sino-badge">{naoLidas}</span>}
+            ☰
           </button>
-          <BotaoTema />
-          <button type="button" className="link" onClick={sair}>
-            Sair
-          </button>
+          <span className="titulo-tela">{NOME_TELA[secao] ?? ''}</span>
         </div>
+        <button
+          type="button"
+          className="sino"
+          onClick={() => setSecao('notificacoes')}
+          aria-label="Notificações"
+          title="Notificações"
+        >
+          🔔
+          {naoLidas > 0 && <span className="sino-badge">{naoLidas}</span>}
+        </button>
       </header>
 
-      <nav className="menu">
-        <button
-          type="button"
-          className={secao === 'inicio' ? 'ativo' : ''}
-          onClick={() => setSecao('inicio')}
-        >
-          Início
-        </button>
-        <button
-          type="button"
-          className={secao === 'demandas' ? 'ativo' : ''}
-          onClick={() => setSecao('demandas')}
-        >
-          Demandas
-          {demandasComNovidade.size > 0 && (
-            <span className="badge-menu">{demandasComNovidade.size}</span>
-          )}
-        </button>
-        <button
-          type="button"
-          className={secao === 'clientes' ? 'ativo' : ''}
-          onClick={() => setSecao('clientes')}
-        >
-          Clientes
-        </button>
-        {perfil.papel === 'admin' && (
-          <button
-            type="button"
-            className={secao === 'equipe' ? 'ativo' : ''}
-            onClick={() => setSecao('equipe')}
-          >
-            Equipe
-          </button>
-        )}
-      </nav>
+      <MenuLateral
+        aberto={menuAberto}
+        aoFechar={() => setMenuAberto(false)}
+        perfil={perfil}
+        secao={secao}
+        novidadesCount={demandasComNovidade.size}
+        aoNavegar={(s) => {
+          setSecao(s)
+          setMenuAberto(false)
+        }}
+        aoSair={sair}
+      />
 
       <section className="conteudo">
         {secao === 'inicio' && (
@@ -212,6 +191,7 @@ export default function Painel({ sessao }) {
         )}
         {secao === 'clientes' && <Clientes perfil={perfil} />}
         {secao === 'equipe' && <Equipe perfil={perfil} />}
+        {secao === 'tema' && <Tema />}
       </section>
 
       <ToastNotificacao

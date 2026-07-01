@@ -152,6 +152,152 @@ textarea::placeholder {
   font-weight: 600;
 }
 
+/* ── Cabecalho enxuto (menu + nome da tela + sino) ─────────── */
+.topo-esq {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.botao-menu {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--topo-texto);
+  padding: 0.2rem 0.4rem;
+}
+.titulo-tela {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--topo-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Menu lateral (drawer) ─────────────────────────────────── */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.menu-backdrop.aberto {
+  opacity: 1;
+  pointer-events: auto;
+}
+.menu-lateral {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 270px;
+  max-width: 80vw;
+  z-index: 61;
+  background: var(--surface);
+  border-right: 1px solid var(--borda);
+  box-shadow: var(--sombra);
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1rem;
+  overflow-y: auto;
+}
+.menu-lateral.aberto {
+  transform: translateX(0);
+}
+.menu-cabecalho {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--borda);
+}
+.menu-logo {
+  height: 54px;
+  width: auto;
+  margin-bottom: 0.4rem;
+}
+[data-theme='dark'] .menu-logo {
+  filter: brightness(0) invert(1);
+}
+.menu-titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+.menu-subtitulo {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+.menu-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.menu-itens button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0.7rem 0.75rem;
+  border-radius: var(--raio-sm);
+  cursor: pointer;
+  font-size: 0.98rem;
+  color: var(--texto);
+  font-family: inherit;
+}
+.menu-itens button:hover {
+  background: var(--surface-2);
+}
+.menu-itens button.ativo {
+  background: var(--primaria-suave);
+  color: var(--primaria);
+  font-weight: 600;
+}
+.menu-itens .menu-sair {
+  margin-top: 0.5rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--borda);
+}
+
+/* ── Tela de Tema ──────────────────────────────────────────── */
+.opcoes-tema {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  max-width: 320px;
+}
+.opcoes-tema button {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-sm);
+  background: var(--surface);
+  color: var(--texto);
+  cursor: pointer;
+  font-size: 1rem;
+  text-align: left;
+  font-family: inherit;
+}
+.opcoes-tema button.ativo {
+  border-color: var(--primaria);
+  background: var(--primaria-suave);
+  color: var(--primaria);
+  font-weight: 600;
+}
+
 .conteudo {
   padding: 1.25rem 1rem;
   max-width: 760px;
